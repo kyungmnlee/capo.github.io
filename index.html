@@ -38,19 +38,19 @@
             <span class="author-block">
               <a href="https://kyungmnlee.github.io">Kyungmin Lee</a><sup>1, 2</sup>,</span>
             <span class="author-block">
-              Xiaohang Li<sup>3</sup>,</span>
+              <a href="https://scholar.google.com/citations?user=5aAbqZIAAAAJ&hl=en">Xiaohang Li</a><sup>3</sup>,</span>
             <span class="author-block">
               <a href="https://research.google/people/107446/?&type=google">Qifei Wang</a><sup>1</sup>,</span>
             <span class="author-block">
               <a href="https://research.google/people/106417/?&type=google">Junfeng He</a><sup>4</sup>,</span>
             <span class="author-block">
-              Junjie Ke<sup>1</sup>,</span>
+              <a href="https://www.linkedin.com/in/junjie-ke/">Junjie ke</a><sup>1</sup>,</span>
             <span class="author-block">
               <a href="https://faculty.ucmerced.edu/mhyang/">Ming-Hsuan Yang</a><sup>1</sup>,</span>
             <span class="author-block">
               <a href="https://www.irfanessa.gatech.edu/">Irfan Essa</a><sup>1,5</sup>,</span>
             <span class="author-block">
-              <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a><sup>1</sup>,
+              <a href="https://alinlab.kaist.ac.kr/shin.html">Jinwoo Shin</a><sup>2</sup>,
             </span>
             <span class="author-block">
               <a href="https://sites.google.com/view/feng-yang">Feng Yang</a><sup>1</sup>,</span>
@@ -72,14 +72,22 @@
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- PDF Link. -->
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2502.02588"
+                <a href="https://arxiv.org/pdf/2502.02588"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="fas fa-file-pdf"></i>
                   </span>
                   <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2502.02588"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
                 </a>
               </span>
 
@@ -90,6 +98,24 @@
   </div>
 </section>
 
+<section class="capo teaser">
+  <div class="columns is-centered has-text-centered">
+    <div class="mySlides">
+      <img src="./static/images/teaser.jpg" style="width:100%; max-width: 1280px;">
+      <div class="imagetext">
+        Teaser
+      </div>
+    <!-- </div>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
+        free-viewpoint
+        portraits.
+      </h2>
+    </div> -->
+  </div>
+</section>
+
+
 <section class="section">
   <div class="container is-max-desktop">
     <!-- Abstract. -->
@@ -98,24 +124,29 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Recent progress in text-to-3D generation has been achieved through the utilization of score distillation methods: 
-            they make use of the pre-trained text-to-image (T2I) diffusion models by distilling via the diffusion model 
-            training objective. However, such an approach inevitably results in the use of random timesteps at each update, 
-            which increases the variance of the gradient and ultimately prolongs the optimization process. In this paper, 
-            we propose to enhance the text-to-3D optimization by leveraging the T2I diffusion prior in the generative 
-            sampling process with a predetermined timestep schedule. To this end, we interpret text-to-3D optimization 
-            as a multi-view image-to-image translation problem, and propose a solution by approximating the probability flow. 
-            By leveraging the proposed novel optimization algorithm, we design DreamFlow, a practical three-stage coarse-to-fine 
-            text-to-3D optimization framework that enables fast generation of high-quality and high-resolution (i.e., 1024 x 1024) 
-            3D contents. For example, we demonstrate that DreamFlow is 5 times faster than the existing state-of-the-art text-to-3D 
-            method, while producing more photorealistic 3D contents.
+            Aligning text-to-image (T2I) diffusion models with preference optimization is valuable for human-annotated datasets,
+            but the heavy cost of manual data collection limits scalability. Using reward models offers an alternative, however,
+            current preference optimization methods fall short in exploiting the rich information, as they only consider pairwise
+            preference distribution. Furthermore, they lack generalization to multi-preference scenarios and struggle to handle
+            inconsistencies between rewards. To address this, we present Calibrated Preference Optimization (CaPO), a novel method
+            to align T2I diffusion models by incorporating the general preference from multiple reward models without human annotated data. 
+            The core of our approach involves a reward calibration method to approximate the general preference by computing the 
+            expected win-rate against the samples generated by the pretrained models. Additionally, we propose a frontier-based pair selection method that effectively
+            manages the multi-preference distribution by selecting pairs
+            from Pareto frontiers. Finally, we use regression loss to
+            fine-tune diffusion models to match the difference between
+            calibrated rewards of a selected pair. Experimental results
+            show that CaPO consistently outperforms prior methods,
+            such as Direct Preference Optimization (DPO), in both single and multi-reward settings validated by evaluation on T2I
+            benchmarks, including GenEval and T2I-Compbench.
           </p>
         </div>
       </div>
     </div>
     <!--/ Abstract. -->
   </section>
-  <section class="section">
+  
+  <!-- <section class="section">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Approximating Probability Flow ODE</h2>
@@ -168,10 +199,10 @@
     </div>
   </div>
 </div>
-</section>
+</section> -->
 
 
-<section class="section">
+<!-- <section class="section">
   <div>
     <div class="columns is-centered has-text-centered">
       <h2 class="title is-3">Results</h2>
@@ -328,7 +359,7 @@
       </div>
     </div>
 
-  </div>
+  </div> -->
 
 <footer class="footer">
   <div class="container">
