@@ -44,7 +44,7 @@
             <span class="author-block">
               <a href="https://research.google/people/106417/?&type=google">Junfeng He</a><sup>4</sup>,</span>
             <span class="author-block">
-              <a href="https://www.linkedin.com/in/junjie-ke/">Junjie ke</a><sup>1</sup>,</span>
+              <a href="https://www.linkedin.com/in/junjie-ke/">Junjie Ke</a><sup>1</sup>,</span>
             <span class="author-block">
               <a href="https://faculty.ucmerced.edu/mhyang/">Ming-Hsuan Yang</a><sup>1</sup>,</span>
             <span class="author-block">
@@ -100,18 +100,16 @@
 
 <section class="capo teaser">
   <div class="columns is-centered has-text-centered">
-    <div class="mySlides">
+    <div class="column is-four-fifths">
+    <div class="figure">
       <img src="./static/images/teaser.jpg" style="width:100%; max-width: 1280px;">
-      <div class="imagetext">
-        Teaser
+        <div class="content has-text-justified">
+          <p>
+          Calibrated Preference Optimization (CaPO) improves the performance of T2I diffusion models by optimizing the model with diverse reward signals. The top and bottom groups are using SDXL and SD3-medium, respectively. For each group, the first row is from base model and the second row is applying CaPO to the base model. CaPO tends to generate images of higher quality (e.g., image aestheticism, text rendering), and better prompt alignment (e.g., compositional generation), without using any human preference dataset.
+          </p>
+        </div>
       </div>
-    <!-- </div>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
-    </div> -->
+  </div>
   </div>
 </section>
 
@@ -145,61 +143,109 @@
     </div>
     <!--/ Abstract. -->
   </section>
-  
-  <!-- <section class="section">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Approximating Probability Flow ODE</h2>
-        <div class="mySlides">
-          <img src="./static/Figure_2.jpg" style="width:100%; max-width: 1280px;">
-          <div class="imagetext">
-            Our method, approximate probability flow ODE (APFO), uses predetermined timestep schedule in contrast to score distillation sampling (SDS),
-            and amortize optimization to update multi-view images in 3D model. We fine-tune denoiser to accurately compute the probability flow. 
-            </div>
-        </div>
-        <br>
-        <div class="content has-text-justified">
-          <p>
-            We introduce approximate probability flow ODE (APFO), which approximates the probability flow to update 3D model.
-            Given an image rendered from a 3D model, we optimize the image by transporting it to the high-density region of text-to-image
-            diffusion model using Schrodinger bridge. We model the score function of current scene by additional fine-tuning, and 
-            compute the approximate probability flow by the different of the denoiser outputs of pretrained model and fine-tuned model.
-            Alike conventional diffusion sampler, we use decreasing sequence of timesteps to guarantee convergence, and amortize the optimization
-            to optimize the multi-view images in a 3D scene. 
-          </p>
-        </div>
-      </div>
-    </div>
 
-  </div>
-</section>
-<section class="section">
-  <div class="columns is-centered has-text-centered">
-    <div class="column is-four-fifths">
-      <h2 class="title is-3">Coarse-to-fine text-to-3D optimization of DreamFlow</h2>
-      <div class="mySlides">
-        <img src="./static/Figure_2_2.jpg" style="width:100%; max-width: 1280px;">
-        <div class="imagetext">
-          Our text-to-3D generation is done in coarse-to-fine manner; we first optimize NeRF, then extract 3D mesh and fine-tune. 
-          We use same latent diffusion model (denoiser 1) for first and second stage. Lastly, we refine 3D mesh with high-resolution 
-          latent diffusion prior (denoiser 2). At each stage, we optimize with different timestep schedule, which effectively utilize the diffusion priors.
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content">
+            <h2 class="title is-3">Proposed Method</h2>
+            <img src="./static/images/method.jpg" style="width:100%; max-width: 1280px;">
+
+            <h3 class="title is-4">(a) Synthetic data generation</h3>
+            <p>
+              Instead of using human-annotated preference dataset, we generate group of images from prompt, and compute reward signals for each reward models such as
+              image aesthetic score (<a href="https://arxiv.org/abs/2303.14302">VILA</a>), image-text alignment score (<a href="https://arxiv.org/abs/2404.01291">VQAscore</a>), 
+              and human preference score (<a href="https://arxiv.org/abs/2405.14705">MPS</a>). We find that using scaling the prompt and the number of images are crucial for performance gain,
+              where we use 100K prompts from <a href="https://arxiv.org/abs/2210.14896">DiffusionDB</a> and generate 16 images per prompt.
+            </p>
+            <h3 class="title is-4">(b) Reward Calibration</h3>
+            <p>
+              Instead of using the reward model directly, we calibrate the reward model to approximate the general preference by computing the expected win-rate against the samples generated by the pretrained models.
+              Specifically, we compute the approximate win-rate by using Bradley-Terry model to compute the statistics of group.
+              Note that this calibration has following advantages: 
+              (1) it allows us to bound the range of scores into [0,1], which helps the balanced optimization by lowering the variance within reward scores.
+              (2) the calibrated rewards act as a global metric where higher calibrated reward represents better performance across different prompts, whereas the higher reward score itself does not necessarily means the better model.
+            </p>
+            <h3 class="title is-4">(c) Pair Selection</h3>
+            <p>
+              For single reward case, it is straightforward to select the pairs with the highest difference in calibrated rewards. 
+              On the other hand, for multi-reward case, we need to select the pairs that are Pareto optimal in the multi-dimensional space.
+              We propose a frontier-based pair selection method that effectively manages the multi-preference distribution by selecting pairs from Pareto frontiers.
+              Specifically, we compute the Pareto frontiers of the calibrated rewards, and select the positives (i.e., non-dominated set) from the upper frontier and 
+              negatives (i.e., dominated set) from the lower frontier. 
+              After removing the potential duplicate, we randomly choose the pairs from the selected positives and negatives for each training step.
+            </p>
+            <h3 class="title is-4">(d) Train with CaPO Loss</h3>
+            <p>
+              We introduce a calibrated preference optimization (CaPO) loss to align the diffusion models with the calibrated rewards.
+              Given calibrated rewards of a pair, we use regression loss to fine-tune diffusion models to match the difference between calibrated rewards of a selected pair.
+              Specifically, we match the difference of implicit rewards (i.e., the log-ratio between the fine-tuning and pretrained model) to match the difference of calibrated rewards.
+              Compared to <a href="https://arxiv.org/abs/2311.12908">DPO</a> and <a href="https://arxiv.org/abs/2310.12036">IPO</a>, which leverage the discrete preference label for
+              training, our objective accounts the difference of calibrated rewards, which allows us to optimize the model without suffering from overfitting. 
+            </p>
           </div>
-      </div>
-      <br>
-      <div class="content has-text-justified">
-        <p>
-          The proposed framework, DreamFlow, perform coarse-to-fine text-to-3D optimization for high-quality 3D content generation.
-          We first optimize NeRF (e.g., using hash-grid encoder) using latent diffusion model (e.g., Stable Diffusion v2.1) with resolution of 256x256, 
-          with timesteps decreasing from 1.0 to 0.2. Then, we extract a 3D mesh from stage 1 for efficient 3D modeling, and optimize 3D mesh with resolution
-          of 512x512 using same denoiser of stage 1, with timesteps decreasing from 0.5 to 0.1. Lastly at stage 3, we refine the 3D mesh using diffusion refiner 
-          (e.g., Stable Diffusion XL refiner), to generate 3D mesh in resolution of 1024x1024. 3D mesh refinement significantly enhance the photorealism of 3D 
-          model, compared to prior methods. 
-        </p>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-</section> -->
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column">
+          <h2 class="title is-3">Results</h2>
+          <div class="content">
+            <h3 class="title is-4">Single reward results</h3>
+            <img src="./static/images/tab111.png" style="width:100%; max-width: 1280px;">
+            <p>
+              When using single reward model to align diffusion models (SDXL and SD3-medium), CaPO achieves the highest win-rate compared
+              to the baselines DPO and IPO. Especially, when using VILA, DPO shows drop in VQAscore, while CaPO shows comparable performance 
+              to the base model. This shows that CaPO is more robust to the reward model due to the reward calibration.
+            </p>
+          </div>
+          
+
+          <div class="content">
+            <h3 class="title is-4">Multi-reward results</h3>
+            <img src="./static/images/table.png" style="width:100%; max-width: 1280px;">
+            <p>
+              When using multiple reward models to align diffusion models (SDXL and SD3-medium), CaPO with frontier-based rejection sampling (FRS)
+              achieves the highest win-rate and scores compared to other baselines. Notably, we compare with SUM, which use the sum of rewards
+              as a proxy for unified reward, and SOUP, which use model soup to combine the models aligned with individual reward models.
+              CaPO with FRS outperforms SUM and SOUP, showing the effectiveness of our method in handling multi-preference problem.
+            </p>
+          </div>
+
+
+          <div class="content">
+            <h3 class="title is-4">Benchmark results</h3>
+            <img src="./static/images/bench.png" style="width:100%; max-width: 1280px;">
+            <p>
+              We evaluate the performance of CaPO on <a href="https://karine-h.github.io/T2I-CompBench/">T2I-CompBench</a> 
+              and <a href="https://arxiv.org/abs/2310.11513">GenEval</a>, which are the benchmarks for T2I diffusion models.
+              Note that CaPO shows significant boost in T2I-CompBench and GenEval for both SDXL and SD3-medium, respectively.
+              Also, we observe that CaPO+SD3-medium shows comparable performance compared to open-source large T2I diffusion models
+              such as FLUX or SD3.5-large. 
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{lee2025calibrated,
+    title={Calibrated multi-preference optimization for aligning diffusion models},
+    author={Lee, Kyungmin and Li, Xiahong and Wang, Qifei and He, Junfeng and Ke, Junjie and Yang, Ming-Hsuan and Essa, Irfan and Shin, Jinwoo and Yang, Feng and Li, Yinxiao},
+    booktitle={Proceedings of the Computer Vision and Pattern Recognition Conference},
+    year={2025}
+}</code></pre>
+    </div>
+  </section>
 
 
 <!-- <section class="section">
